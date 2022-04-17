@@ -1,11 +1,10 @@
-# Use Alpine with Glibc for the toolchain
 FROM ubuntu:latest
 
 #####
 # Constants
 #####
 # GLOBAL
-ENV TOOLCHAIN_SCRIPT_NAME="get_latest_gcc-arm-none-eabi.sh"
+ENV GET_JLINK_PACKAGE_SCRIPT_NAME="get_jlink_software_package.sh"
 ENV ENTRYPOINT_SCRIPT_NAME="container_entrypoint.sh"
 ENV USER_NAME="dev"
 
@@ -16,16 +15,18 @@ ENV local_DOT_FILES_DIR="container_dot_files"
 # RESULTANT IMAGE CONSTANTS
 ENV image_CUSTOM_PACKAGES_INSTALL_DIR="/opt"
 ENV image_INSTALL_SCRIPTS_DIR="${image_CUSTOM_PACKAGES_INSTALL_DIR}/install_tools"
-ENV image_TOOLCHAIN_DIR="${image_CUSTOM_PACKAGES_INSTALL_DIR}/gcc-arm-none-eabi"
+ENV image_JLINK_DIR="${image_CUSTOM_PACKAGES_INSTALL_DIR}"
+ENV image_JLINK_VERSION="v7.62b"
 ENV image_ENTRYPOINT_SCRIPT_DIR="/etc"
 
 #####
 # "Functions"
 #####
 # can use eval to resolve layered environment variables
-ENV DOWNLOAD_TOOLCHAIN="${image_INSTALL_SCRIPTS_DIR}/${TOOLCHAIN_SCRIPT_NAME} \
-                            -o ${image_TOOLCHAIN_DIR}"
-ENV GET_TOOLCHAIN_FILENAME="${DOWNLOAD_TOOLCHAIN} --name-only"
+ENV DOWNLOAD_JLINK_PACKAGE="${image_INSTALL_SCRIPTS_DIR}/${GET_JLINK_PACKAGE_SCRIPT_NAME} \
+                            -o ${image_JLINK_DIR} \
+                            -v ${image_JLINK_VERSION}"
+ENV GET_JLINK_PACKAGE_FILENAME="${DOWNLOAD_JLINK_PACKAGE} --name-only"
 
 #####
 # IMAGE BUILD
@@ -34,11 +35,10 @@ ENV GET_TOOLCHAIN_FILENAME="${DOWNLOAD_TOOLCHAIN} --name-only"
 #       not using WORKDIR b/c all paths are absolute; single RUN means only 1 layer instead of many
 RUN mkdir -p \
     "${image_INSTALL_SCRIPTS_DIR}" \
-    "${image_TOOLCHAIN_DIR}" \
+    "${image_JLINK_DIR}" \
     "${image_ENTRYPOINT_SCRIPT_DIR}"
 
 # Copy install scripts, local packages (if they exist), and entrypoint script
-COPY gcc-arm-none-eabi*tar.xz ${image_TOOLCHAIN_DIR}
 COPY ${local_INSTALL_SCRIPTS_DIR} ${image_INSTALL_SCRIPTS_DIR}
 COPY ${ENTRYPOINT_SCRIPT_NAME} ${image_ENTRYPOINT_SCRIPT_DIR}
 
@@ -49,11 +49,11 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 	make \
 	curl \
 	ca-certificates \
-	xz-utils \
-    && eval "${DOWNLOAD_TOOLCHAIN}" \
-	&& tar -vxf $(eval "${GET_TOOLCHAIN_FILENAME}") -C ${image_TOOLCHAIN_DIR} \
+	xz-utils 
+RUN eval "${DOWNLOAD_JLINK_PACKAGE}" \
+	&& tar -vxf $(eval "${GET_JLINK_PACKAGE_FILENAME}") -C ${image_JLINK_DIR} \
 	&& rm -rf \
-		$(eval "${GET_TOOLCHAIN_FILENAME}") \
+		$(eval "${GET_JLINK_PACKAGE_FILENAME}") \
 		${image_INSTALL_SCRIPTS_DIR} \
 	&& apt-get clean
 
@@ -74,11 +74,11 @@ ENV image_INSTALL_SCRIPTS_DIR=""
 #####
 # "Function" Updates
 #####
-ENV GET_TOOLCHAIN_FILENAME="ls ${image_TOOLCHAIN_DIR} | grep '^gcc-\S*-none-eabi$'"
+ENV GET_JLINK_PACKAGE_FILENAME="ls ${image_JLINK_DIR} | grep '^JLink_Linux_\S*_x86_64$'"
 ENV DOWNLOAD_TOOLCHAIN=""
 
 #####
 # Entrypoint Setup
 #####
 ENTRYPOINT ["/bin/bash", "-c", "${image_ENTRYPOINT_SCRIPT_DIR}/${ENTRYPOINT_SCRIPT_NAME} \"${@}\"", "--"]
-CMD ["echo", "hello from inside the raxt"]
+CMD ["echo", "the hammer goes ting ting"]

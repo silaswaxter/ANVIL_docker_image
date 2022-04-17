@@ -11,6 +11,7 @@ SILENT_FLAG=""
 VERSION_INPUT=""
 VERSION_FORMATTED=""
 OUTPUT_DIR="."
+NAME_ONLY_FLAG="0"
 
 #####
 # Functions
@@ -67,6 +68,8 @@ while test $# -gt 0; do
             echo "-v, -v <version>      Select version of jlink software package."
             echo "                          <version> formatting:"
             echo "                          'V762b', 'V7.62b', 'v7.62b', 'v762b', '762b', '7.62b'"
+            echo "--name-only           Prints only the filename of the jlink package that would"
+            echo "                      be installed had this flag not been passed."
 			echo " "
       		exit 0
       		;;
@@ -95,6 +98,14 @@ while test $# -gt 0; do
       		fi
       		shift
       		;;
+    	--name-only)
+            #only print filename
+	  		SILENT_FLAG="1"
+
+            NAME_ONLY_FLAG="1"
+
+			shift
+      		;;
     	*)
       		break
       		;;
@@ -102,9 +113,17 @@ while test $# -gt 0; do
 done
 
 #####
+# Name-Only Flag Operation
+#####
+if [ ${NAME_ONLY_FLAG} -eq 1 ]
+then
+    get_jlink_software_file_name
+    exit 0
+fi
+
+#####
 # Download Package
 #####
-get_jlink_software_download_url
 print_conditionally "Downloading jlink software package..."
 download_with_curl "$(get_jlink_software_file_name)" "$(get_jlink_software_download_url)" \
     "-d accept_license_agreement=accepted"

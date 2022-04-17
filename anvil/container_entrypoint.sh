@@ -13,7 +13,7 @@
 #####
 # Update $PATH with toolchain binaries
 #####
-export PATH=${image_TOOLCHAIN_DIR}/$(eval ${GET_TOOLCHAIN_FILENAME})/bin:$PATH
+export PATH=${image_JLINK_DIR}/$(eval ${GET_JLINK_PACKAGE_FILENAME}):$PATH
 
 #####
 # Run the interactive shell
