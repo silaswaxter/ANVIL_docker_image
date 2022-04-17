@@ -22,7 +22,7 @@ format_version_string () {
 }
 
 get_jlink_software_download_url () {
-    if [ -n ${VERSION_FORMATTED} ]
+    if [ -n "${VERSION_FORMATTED}" ]
     then
         echo "https://www.segger.com/downloads/jlink/JLink_Linux_${VERSION_FORMATTED}_x86_64.tgz"
         return 0
@@ -33,7 +33,7 @@ get_jlink_software_download_url () {
 }
 
 get_jlink_software_file_name () {
-    if [ -n ${VERSION_FORMATTED} ]
+    if [ -n "${VERSION_FORMATTED}" ]
     then
         echo "${OUTPUT_DIR}/JLink_Linux_${VERSION_FORMATTED}_x86_64.tgz"
         return 0
@@ -104,6 +104,7 @@ done
 #####
 # Download Package
 #####
+get_jlink_software_download_url
 print_conditionally "Downloading jlink software package..."
 download_with_curl "$(get_jlink_software_file_name)" "$(get_jlink_software_download_url)" \
     "-d accept_license_agreement=accepted"
