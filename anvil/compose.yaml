@@ -1,0 +1,4 @@
+services:
+  anvil:
+    image: anvil:latest
+    build: .
