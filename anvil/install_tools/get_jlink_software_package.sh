@@ -14,6 +14,12 @@ OUTPUT_DIR="."
 NAME_ONLY_FLAG="0"
 
 #####
+# Includes
+#####
+. ${SCRIPT_DIR}/curl_functions.sh
+. ${SCRIPT_DIR}/print_functions.sh
+
+#####
 # Functions
 #####
 format_version_string () {
@@ -25,10 +31,10 @@ format_version_string () {
 get_jlink_software_download_url () {
     if [ -n "${VERSION_FORMATTED}" ]
     then
-        echo "https://www.segger.com/downloads/jlink/JLink_Linux_${VERSION_FORMATTED}_x86_64.tgz"
+        echo "https://www.segger.com/downloads/jlink/JLink_Linux_${VERSION_FORMATTED}_x86_64.deb"
         return 0
     else
-        echo "https://www.segger.com/downloads/jlink/JLink_Linux_x86_64.tgz"
+        echo "https://www.segger.com/downloads/jlink/JLink_Linux_x86_64.deb"
         return 0
     fi
 }
@@ -36,29 +42,21 @@ get_jlink_software_download_url () {
 get_jlink_software_file_name () {
     if [ -n "${VERSION_FORMATTED}" ]
     then
-        echo "${OUTPUT_DIR}/JLink_Linux_${VERSION_FORMATTED}_x86_64.tgz"
+        echo "${OUTPUT_DIR}/JLink_Linux_${VERSION_FORMATTED}_x86_64.deb"
         return 0
     else
-        echo "${OUTPUT_DIR}/JLink_Linux_x86_64.tgz"
+        echo "${OUTPUT_DIR}/JLink_Linux_x86_64.deb"
         return 0
     fi
 }
 
-#####
-# Includes (source other scripts)
-#####
-. ${SCRIPT_DIR}/curl_functions.sh
-. ${SCRIPT_DIR}/print_functions.sh
 
-#####
 # Parse Passed Flags
-#####
 while test $# -gt 0; do
 	case "$1" in
 		-h|--help)
-			echo "USAGE:    get_latest_gcc-arm-none-eabi.sh [OPTIONS]"
-			echo "ABOUT:    tool for downloading toolchain from ARM official downloads and"
-	  		echo "          retrieving latest version"
+			echo "USAGE:    get_jlink_software_package.sh [OPTIONS]"
+			echo "ABOUT:    Downloads SEGGER's JLink software package.  Installs *.deb file"
       		echo " "
       		echo "OPTIONS:"
       		echo "-h, --help            Show help"
@@ -112,18 +110,14 @@ while test $# -gt 0; do
 	esac
 done
 
-#####
 # Name-Only Flag Operation
-#####
 if [ ${NAME_ONLY_FLAG} -eq 1 ]
 then
     get_jlink_software_file_name
     exit 0
 fi
 
-#####
 # Download Package
-#####
 print_conditionally "Downloading jlink software package..."
 download_with_curl "$(get_jlink_software_file_name)" "$(get_jlink_software_download_url)" \
     "-d accept_license_agreement=accepted"

@@ -1,0 +1,1 @@
+SUBSYSTEM=="usb", ATTR{idVendor}=="1366", GROUP="segger_usb_devices", MODE="0666"
