@@ -26,12 +26,10 @@ To allow the non-root user inside the container to have access to the usb device
 allows Linux users (for host and container) which belong to the "segger_usb_devices" group to have
 read and write permissions to devices which have the SEGGER vendor-ID.
 
-When starting the container one should use the following command.  The "-v /dev..." portion creates
-a bind mount between the container and the host.  The "--device-cgroup-rule=..." portion allows the
-running container to have access to the device even after the JLink has been plugged/replugged;  
-the rule depends on the "major group" for the device (in this case 189).
+When starting the container one should use the following command.  The docker compose file
+describes the default configuration for new containers (ie volume mounts, cgroup rules, etc.)  
 ```
-docker run -it -v /dev/bus/usb:/dev/bus/usb --device-cgroup-rule='c 189:* rmw' anvil /bin/bash
+docker compose -f <PATH_TO_COMPOSE_FILE> run -it anvil bash
 ```
 ##### How to Identify "Major Group"
 Running 'lsusb' will show the bus number, and assignment number for the J-Link device.  Next, run
