@@ -13,7 +13,7 @@
           //          //                            \\          \\
          //==========//                              \\==========\\
 ```
-# Auxiliary Networked deVice Interface Link
+# Auxiliary Networkable deVice Interface Link
 This project provides a standardized interface for embedded hardware.
 
 ## SEGGER JLink Package
@@ -29,12 +29,12 @@ read and write permissions to devices which have the SEGGER vendor-ID.
 When starting the container one should use the following command.  The docker compose file
 describes the default configuration for new containers (ie volume mounts, cgroup rules, etc.)  
 ```
-docker compose -f <PATH_TO_COMPOSE_FILE> run -it anvil bash
+docker compose -f PATH_TO_COMPOSE_FILE run -it anvil bash
 ```
-##### How to Identify "Major Group"
-Running 'lsusb' will show the bus number, and assignment number for the J-Link device.  Next, run
-'ls -al /dev/bus/usb/<BUS_NUMBER>/<ASSIGNMENT_NUMBER>'.  The number before the date will be the 
-"Major Group" number.
+##### How to identify device's "Major Group"
+1. Running `lsusb` will show the bus number, and assignment number for the J-Link device.  
+2. Next, run `ls -al /dev/bus/usb/<BUS_NUMBER>/<ASSIGNMENT_NUMBER>`;  the number before the date  
+   is the "Major Group" number for the device.
 
 ## Workflow
 - Attempting to use Trunk-Based Workflow (https://trunkbaseddevelopment.com)
